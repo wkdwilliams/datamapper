@@ -1,0 +1,22 @@
+{
+    "name": "lewy/datamapper",
+    "description": "This package provides a repository, entity & datamapper design pattern",
+    "type": "library",
+    "require": {
+        "nesbot/carbon": "^2.57",
+        "tomfordrumm/jwt-auth": "dev-develop",
+        "predis/predis": "^1.1"
+    },
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Lewy\\DataMapper\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "wkdwilliams",
+            "email": "31390496+wkdwilliams@users.noreply.github.com"
+        }
+    ]
+}
