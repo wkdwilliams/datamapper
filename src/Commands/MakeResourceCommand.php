@@ -254,6 +254,8 @@ class @@@@@@@@@@@@Seeder extends Seeder
         $this->service_template         = str_replace(self::NAMESPACEREPLACER, $_namespace, $this->service_template);
 
         $this->factory_template         = str_replace(self::REPLACER, $_name, $this->factory_template);
+        $this->factory_template         = str_replace(self::NAMESPACEREPLACER, $_namespace, $this->factory_template);
+
         $this->seeder_template          = str_replace(self::REPLACER, $_name, $this->seeder_template);
         
         // Set model table name
