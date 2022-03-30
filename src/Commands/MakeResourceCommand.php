@@ -221,7 +221,7 @@ class @@@@@@@@@@@@Seeder extends Seeder
     public function handle()
     {
         $_base = base_path();
-        $_base .= "/".config('outDir', 'App')."/";
+        $_base .= "/".config('datamapper.outDir', 'App')."/";
         
         $_name = $this->argument('name');
         $_name = ucfirst($_name);
