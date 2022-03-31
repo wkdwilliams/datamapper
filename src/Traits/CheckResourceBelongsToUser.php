@@ -5,7 +5,7 @@ namespace Lewy\DataMapper\Traits;
 use Core\Exceptions\PermissionDeniedException;
 use Illuminate\Http\JsonResponse;
 
-trait CheckResourceBelongsToUser
+trait ResourceMustBelongToAuthenticatedUser
 {
     
     /**
