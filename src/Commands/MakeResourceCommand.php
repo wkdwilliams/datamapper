@@ -15,9 +15,9 @@ class MakeResourceCommand extends Command
 
     private $datamapper_template = "<?php
 
-namespace App\@@@@@@@@@@@@\DataMappers;
+namespace ___NAMESPACE___\@@@@@@@@@@@@\DataMappers;
     
-use App\@@@@@@@@@@@@\Entities\@@@@@@@@@@@@Entity;
+use ___NAMESPACE___\@@@@@@@@@@@@\Entities\@@@@@@@@@@@@Entity;
 use Lewy\DataMapper\DataMapper;
 use Lewy\DataMapper\Entity;
     
@@ -58,14 +58,14 @@ class @@@@@@@@@@@@DataMapper extends DataMapper
 
     private $controller_template = "<?php
 
-namespace App\@@@@@@@@@@@@\Controllers;
+namespace ___NAMESPACE___\@@@@@@@@@@@@\Controllers;
     
-use App\@@@@@@@@@@@@\DataMappers\@@@@@@@@@@@@DataMapper;
-use App\@@@@@@@@@@@@\Models\@@@@@@@@@@@@;
-use App\@@@@@@@@@@@@\Repositories\@@@@@@@@@@@@Repository;
-use App\@@@@@@@@@@@@\Resources\@@@@@@@@@@@@Collection;
-use App\@@@@@@@@@@@@\Resources\@@@@@@@@@@@@Resource;
-use App\@@@@@@@@@@@@\Services\@@@@@@@@@@@@Service;
+use ___NAMESPACE___\@@@@@@@@@@@@\DataMappers\@@@@@@@@@@@@DataMapper;
+use ___NAMESPACE___\@@@@@@@@@@@@\Models\@@@@@@@@@@@@;
+use ___NAMESPACE___\@@@@@@@@@@@@\Repositories\@@@@@@@@@@@@Repository;
+use ___NAMESPACE___\@@@@@@@@@@@@\Resources\@@@@@@@@@@@@Collection;
+use ___NAMESPACE___\@@@@@@@@@@@@\Resources\@@@@@@@@@@@@Resource;
+use ___NAMESPACE___\@@@@@@@@@@@@\Services\@@@@@@@@@@@@Service;
 use Lewy\DataMapper\Controller;
     
 class @@@@@@@@@@@@Controller extends Controller
@@ -87,7 +87,7 @@ class @@@@@@@@@@@@Controller extends Controller
 
     private $entities_template = "<?php
 
-namespace App\@@@@@@@@@@@@\Entities;
+namespace ___NAMESPACE___\@@@@@@@@@@@@\Entities;
     
 use Lewy\DataMapper\Entity;
     
@@ -99,7 +99,7 @@ class @@@@@@@@@@@@Entity extends Entity
 
     private $model_template = "<?php
 
-namespace App\@@@@@@@@@@@@\Models;
+namespace ___NAMESPACE___\@@@@@@@@@@@@\Models;
     
 use Lewy\DataMapper\Model;
     
@@ -115,10 +115,10 @@ class @@@@@@@@@@@@ extends Model
 
     private $repositories_template = "<?php
 
-namespace App\@@@@@@@@@@@@\Repositories;
+namespace ___NAMESPACE___\@@@@@@@@@@@@\Repositories;
 
-use App\@@@@@@@@@@@@\DataMappers\@@@@@@@@@@@@DataMapper;
-use App\@@@@@@@@@@@@\Models\@@@@@@@@@@@@;
+use ___NAMESPACE___\@@@@@@@@@@@@\DataMappers\@@@@@@@@@@@@DataMapper;
+use ___NAMESPACE___\@@@@@@@@@@@@\Models\@@@@@@@@@@@@;
 use Lewy\DataMapper\Repository;
     
 class @@@@@@@@@@@@Repository extends Repository
@@ -129,7 +129,7 @@ class @@@@@@@@@@@@Repository extends Repository
 
     private $resource_template = "<?php
 
-namespace App\@@@@@@@@@@@@\Resources;
+namespace ___NAMESPACE___\@@@@@@@@@@@@\Resources;
     
 use Illuminate\Http\Resources\Json\JsonResource;
     
@@ -152,7 +152,7 @@ class @@@@@@@@@@@@Resource extends JsonResource
 
     private $collection_template = "<?php
 
-namespace App\@@@@@@@@@@@@\Resources;
+namespace ___NAMESPACE___\@@@@@@@@@@@@\Resources;
     
 use Lewy\DataMapper\ResourceCollection;
     
@@ -170,7 +170,7 @@ class @@@@@@@@@@@@Collection extends ResourceCollection
 
     private $service_template = "<?php
 
-namespace App\@@@@@@@@@@@@\Services;
+namespace ___NAMESPACE___\@@@@@@@@@@@@\Services;
     
 use Lewy\DataMapper\Service;
     
@@ -183,7 +183,7 @@ class @@@@@@@@@@@@Service extends Service
 
 namespace Database\Factories;
     
-use App\@@@@@@@@@@@@\Models\@@@@@@@@@@@@;
+use ___NAMESPACE___\@@@@@@@@@@@@\Models\@@@@@@@@@@@@;
 use Illuminate\Database\Eloquent\Factories\Factory;
     
 class @@@@@@@@@@@@Factory extends Factory
@@ -202,7 +202,7 @@ class @@@@@@@@@@@@Factory extends Factory
 
     private $seeder_template = "<?php
 
-use App\@@@@@@@@@@@@\Models\@@@@@@@@@@@@;
+use ___NAMESPACE___\@@@@@@@@@@@@\Models\@@@@@@@@@@@@;
 use Illuminate\Database\Seeder;
     
 class @@@@@@@@@@@@Seeder extends Seeder
@@ -216,25 +216,46 @@ class @@@@@@@@@@@@Seeder extends Seeder
 
     private const REPLACER          = "@@@@@@@@@@@@";
     private const TABLENAMEREPLACER = "!!!!!!!!!!!!!";
+    private const NAMESPACEREPLACER = "___NAMESPACE___";
 
     public function handle()
     {
         $_base = base_path();
-        $_base .= "/App/";
+        $_base .= "/".config('datamapper.outDir', 'App')."/";
         
         $_name = $this->argument('name');
         $_name = ucfirst($_name);
 
+        $_namespace = config('datamapper.namespace', 'App');
+
         // Set namespaces & class names
         $this->datamapper_template      = str_replace(self::REPLACER, $_name, $this->datamapper_template);
+        $this->datamapper_template      = str_replace(self::NAMESPACEREPLACER, $_namespace, $this->datamapper_template);
+
         $this->controller_template      = str_replace(self::REPLACER, $_name, $this->controller_template);
+        $this->controller_template      = str_replace(self::NAMESPACEREPLACER, $_namespace, $this->controller_template);
+
         $this->entities_template        = str_replace(self::REPLACER, $_name, $this->entities_template);
+        $this->entities_template        = str_replace(self::NAMESPACEREPLACER, $_namespace, $this->entities_template);
+
         $this->model_template           = str_replace(self::REPLACER, $_name, $this->model_template);
+        $this->model_template           = str_replace(self::NAMESPACEREPLACER, $_namespace, $this->model_template);
+
         $this->repositories_template    = str_replace(self::REPLACER, $_name, $this->repositories_template);
+        $this->repositories_template    = str_replace(self::NAMESPACEREPLACER, $_namespace, $this->repositories_template);
+
         $this->resource_template        = str_replace(self::REPLACER, $_name, $this->resource_template);
+        $this->resource_template        = str_replace(self::NAMESPACEREPLACER, $_namespace, $this->resource_template);
+
         $this->collection_template      = str_replace(self::REPLACER, $_name, $this->collection_template);
+        $this->collection_template      = str_replace(self::NAMESPACEREPLACER, $_namespace, $this->collection_template);
+
         $this->service_template         = str_replace(self::REPLACER, $_name, $this->service_template);
+        $this->service_template         = str_replace(self::NAMESPACEREPLACER, $_namespace, $this->service_template);
+
         $this->factory_template         = str_replace(self::REPLACER, $_name, $this->factory_template);
+        $this->factory_template         = str_replace(self::NAMESPACEREPLACER, $_namespace, $this->factory_template);
+
         $this->seeder_template          = str_replace(self::REPLACER, $_name, $this->seeder_template);
         
         // Set model table name
@@ -270,7 +291,7 @@ class @@@@@@@@@@@@Seeder extends Seeder
         $this->info('Resource Created');
         $this->info("");
 
-        $this->info("Route: Route::resource('/".strtolower($_name)."', '\App\\".$_name."\Controllers\\".$_name."Controller');");
+        $this->info("Route: Route::resource('/".strtolower($_name)."', '\\".$_namespace."\\".$_name."\Controllers\\".$_name."Controller');");
         $this->info("Seeder: ".$_name."::factory(20)->create();");
 
     }
