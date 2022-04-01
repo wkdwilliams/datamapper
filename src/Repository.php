@@ -252,7 +252,7 @@ abstract class Repository
      */
     public function entity(): Entity
     {
-        if(!env('APP_DEBUG') && $this->useCache) // Only use the cache in production & if use cache is true
+        if($this->useCache) // Only use the cache in production & if use cache is true
             $data = Cache::remember($this->cacheKey, Carbon::now()->addHour(), function(){
                 $_data = $this->getQuery()->first();
                 if($_data === null) throw new ResourceNotFoundException();
@@ -277,7 +277,7 @@ abstract class Repository
     public function entityCollection(): EntityCollection
     {
         if($this->paginate > 0){
-            if(!env('APP_DEBUG') && $this->useCache) // Only use the cache in production & if use cache is true
+            if($this->useCache) // Only use the cache if use cache is true
                 $data = Cache::remember($this->cacheKey.":page:".$this->page, Carbon::now()->addHour(), function(){
                     return $this->getQuery()->paginate($this->paginate, ['*'], 'page', $this->page)->toArray();
                 });
@@ -294,7 +294,7 @@ abstract class Repository
             return $collection;
         }
 
-        if(!env('APP_DEBUG') && $this->useCache) // Only use the cache in production & if use cache is true
+        if($this->useCache) // Only use the cache in production & if use cache is true
             $data = Cache::remember($this->cacheKey.":all", Carbon::now()->addHour(), function(){
                 return $this->getQuery()->get()->toArray();
             });
