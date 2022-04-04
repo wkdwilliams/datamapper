@@ -4,7 +4,6 @@
     "type": "library",
     "require": {
         "nesbot/carbon": "^2.57",
-        "tomfordrumm/jwt-auth": "dev-develop",
         "predis/predis": "^1.1"
     },
     "license": "MIT",

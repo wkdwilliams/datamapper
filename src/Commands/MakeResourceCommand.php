@@ -283,16 +283,25 @@ class @@@@@@@@@@@@Seeder extends Seeder
         file_put_contents($_base."Resources/{$_name}Collection.php"             , $this->collection_template);
         file_put_contents($_base."Services/{$_name}Service.php"                 , $this->service_template);
         
-        file_put_contents(base_path()."/database/factories/{$_name}Factory.php" , $this->factory_template);
+        // Make factory
+        $makeFactory = $this->ask("Make factory?", "yes");
+        $makeFactory = $makeFactory === "Y" || $makeFactory === "yes" || $makeFactory === "y";
+        if($makeFactory)
+            file_put_contents(base_path()."/database/factories/{$_name}Factory.php" , $this->factory_template);
 
-        // Mke migration
-        $this->call("make:migration", ['name' => "create_".$_tableName."_table"]);
+        // Make migration
+        $makeMigration = $this->ask("Make migration?", "yes");
+        $makeMigration = $makeMigration === "Y" || $makeMigration === "yes" || $makeMigration === "y";
+        if($makeMigration)
+            $this->call("make:migration", ['name' => "create_".$_tableName."_table"]);
 
         $this->info('Resource Created');
         $this->info("");
 
         $this->info("Route: Route::resource('/".strtolower($_name)."', '\\".$_namespace."\\".$_name."\Controllers\\".$_name."Controller');");
-        $this->info("Seeder: ".$_name."::factory(20)->create();");
+        
+        if($makeFactory)
+            $this->info("Seeder: ".$_name."::factory(20)->create();");
 
     }
 
