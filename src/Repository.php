@@ -70,6 +70,9 @@ abstract class Repository
      */
     public function clearCache(): void
     {
+        if(!$this->useCache)
+            return;
+            
         collect(Redis::command("KEYS", ['*'.$this->cachePrefix.':*']))->map(function($value){
             Redis::command("DEL", [$value]);
         });
