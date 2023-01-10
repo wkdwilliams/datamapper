@@ -266,6 +266,9 @@ class UpdateFormRequest extends FormRequest
         $this->createFormRequest        = str_replace(self::REPLACER, $_name, $this->createFormRequest);
         $this->createFormRequest        = str_replace(self::NAMESPACEREPLACER, $_namespace, $this->createFormRequest);
 
+        $this->updateFormRequest        = str_replace(self::REPLACER, $_name, $this->updateFormRequest);
+        $this->updateFormRequest        = str_replace(self::NAMESPACEREPLACER, $_namespace, $this->updateFormRequest);
+
         $this->datamapper_template      = str_replace(self::REPLACER, $_name, $this->datamapper_template);
         $this->datamapper_template      = str_replace(self::NAMESPACEREPLACER, $_namespace, $this->datamapper_template);
 
