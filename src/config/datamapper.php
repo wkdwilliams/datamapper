@@ -8,5 +8,5 @@ return [
 	'outDir'    => 'App',
 
 	// Enable/disable the caching of repository results
-	'useCache'  => env('DATAMAPPER_USE_CACHE', true)
+	'useCache'  => env('DATAMAPPER_USE_CACHE', false)
 ];
