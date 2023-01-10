@@ -214,6 +214,40 @@ class @@@@@@@@@@@@Seeder extends Seeder
 }
 ";
 
+    private $createFormRequest = "<?php
+
+namespace ___NAMESPACE___\@@@@@@@@@@@@\Requests;
+    
+use Illuminate\Foundation\Http\FormRequest;
+    
+class CreateFormRequest extends FormRequest
+{
+    public function rules()
+    {
+        return [
+                
+        ];
+    }
+}
+";
+
+    private $updateFormRequest = "<?php
+
+namespace ___NAMESPACE___\@@@@@@@@@@@@\Requests;
+    
+use Illuminate\Foundation\Http\FormRequest;
+    
+class UpdateFormRequest extends FormRequest
+{
+    public function rules()
+    {
+        return [
+                
+        ];
+    }
+}
+";
+
     private const REPLACER          = "@@@@@@@@@@@@";
     private const TABLENAMEREPLACER = "!!!!!!!!!!!!!";
     private const NAMESPACEREPLACER = "___NAMESPACE___";
@@ -229,6 +263,9 @@ class @@@@@@@@@@@@Seeder extends Seeder
         $_namespace = config('datamapper.namespace', 'App');
 
         // Set namespaces & class names
+        $this->createFormRequest        = str_replace(self::REPLACER, $_name, $this->createFormRequest);
+        $this->createFormRequest        = str_replace(self::NAMESPACEREPLACER, $_namespace, $this->createFormRequest);
+
         $this->datamapper_template      = str_replace(self::REPLACER, $_name, $this->datamapper_template);
         $this->datamapper_template      = str_replace(self::NAMESPACEREPLACER, $_namespace, $this->datamapper_template);
 
@@ -273,6 +310,7 @@ class @@@@@@@@@@@@Seeder extends Seeder
         mkdir($_base."Repositories");
         mkdir($_base."Resources");
         mkdir($_base."Services");
+        mkdir($_base."Requests");
 
         file_put_contents($_base."DataMappers/{$_name}DataMapper.php"           , $this->datamapper_template);
         file_put_contents($_base."Controllers/{$_name}Controller.php"           , $this->controller_template);
@@ -282,6 +320,8 @@ class @@@@@@@@@@@@Seeder extends Seeder
         file_put_contents($_base."Resources/{$_name}Resource.php"               , $this->resource_template);
         file_put_contents($_base."Resources/{$_name}Collection.php"             , $this->collection_template);
         file_put_contents($_base."Services/{$_name}Service.php"                 , $this->service_template);
+        file_put_contents($_base."Requests/{$_name}CreateRequest.php"           , $this->createFormRequest);
+        file_put_contents($_base."Requests/{$_name}UpdateRequest.php"           , $this->updateFormRequest);
         
         // Make factory
         $makeFactory = $this->ask("Make factory?", "yes");
