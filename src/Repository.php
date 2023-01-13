@@ -315,7 +315,7 @@ abstract class Repository
      * 
      * @return Entity
      */
-    public function create($data): Entity
+    public function create(array|Entity $data): Entity
     {
         if ($data instanceof Entity) {
             $data = $this->datamapper->entityToArray($data);    // Convert entity to array to prepare for the model
@@ -349,7 +349,7 @@ abstract class Repository
      * 
      * @return Entity
      */
-    public function update($data): Entity
+    public function update(array|Entity $data): Entity
     {
         if($data instanceof Entity)
             $data = $this->datamapper->entityToArray($data);    // Convert our Entity to array ready for the model
