@@ -140,9 +140,7 @@ class Controller extends BaseController
             $this->request->request->remove($field);
         }
 
-        $this->request->validate($this->createRules);
-
-        $data = $this->request->all();
+        $data = $this->request->validate($this->createRules);
 
         $repos = $this->service->createResource($data);
 
@@ -162,9 +160,7 @@ class Controller extends BaseController
             $this->request->request->remove($field);
         }
 
-        $this->request->validate($this->updateRules);
-
-        $data = $this->request->all();
+        $data = $this->request->validate($this->updateRules);
 
         $repos = $this->service->updateResource([
             'id' => $id,
