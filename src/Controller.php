@@ -27,18 +27,6 @@ class Controller extends BaseController
     protected Request $request;
 
     /**
-     * The fields that we don't want users to update
-     * @var array
-     */
-    protected array $guardedUpdateFields = [];
-
-    /**
-     * The fields that we don't want users to create
-     * @var array
-     */
-    protected array $guardedCreateFields = [];
-
-    /**
      * The validation rules we want when updating a resource
      * @var array
      */
@@ -79,9 +67,6 @@ class Controller extends BaseController
                 $this->request->get('page') ?? 1
             )
         );
-
-        // Append guarded fields for all resources.
-        $this->guardedUpdateFields[] = 'user_id';
     }
 
     /**
@@ -136,12 +121,7 @@ class Controller extends BaseController
      */
     public function store(): JsonResponse
     {
-        foreach ($this->guardedCreateFields as $field) {
-            $this->request->request->remove($field);
-        }
-
-        $data = $this->request->validate($this->createRules);
-
+        $data  = $this->request->validate($this->createRules);
         $repos = $this->service->createResource($data);
 
         return $this->response(
@@ -156,12 +136,7 @@ class Controller extends BaseController
      */
     public function update(int $id): JsonResponse
     {
-        foreach ($this->guardedUpdateFields as $field) {
-            $this->request->request->remove($field);
-        }
-
-        $data = $this->request->validate($this->updateRules);
-
+        $data  = $this->request->validate($this->updateRules);
         $repos = $this->service->updateResource([
             'id' => $id,
             ...$data
