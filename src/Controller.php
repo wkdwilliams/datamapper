@@ -121,8 +121,10 @@ class Controller extends BaseController
      */
     public function store(): JsonResponse
     {
-        $data  = $this->request->validate($this->createRules);
-        $repos = $this->service->createResource($data);
+        $repos = $this->service->createResource([
+            'user_id' => $this->authenticatedUser->id ?? null,
+            ...$this->request->validate($this->createRules)
+        ]);
 
         return $this->response(
             new $this->classes['resource']($repos), null, 201
@@ -136,10 +138,10 @@ class Controller extends BaseController
      */
     public function update(int $id): JsonResponse
     {
-        $data  = $this->request->validate($this->updateRules);
         $repos = $this->service->updateResource([
-            'id' => $id,
-            ...$data
+            'id'        => $id,
+            'user_id'   => $this->authenticatedUser->id ?? null,
+            ...$this->request->validate($this->updateRules)
         ]);
 
         return $this->response(
