@@ -138,11 +138,13 @@ class Controller extends BaseController
      */
     public function update(int $id): JsonResponse
     {
-        $repos = $this->service->updateResource([
-            'id'        => $id,
-            'user_id'   => $this->authenticatedUser->id ?? null,
+        $data = [
+            'id' => $id,
             ...$this->request->validate($this->updateRules)
-        ]);
+        ];
+
+        if($this->authenticatedUser !== null)
+            $data['user_id'] = $this->authenticatedUser->id;
 
         return $this->response(
             new $this->classes['resource']($repos)
