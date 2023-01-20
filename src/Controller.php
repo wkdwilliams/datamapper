@@ -146,6 +146,8 @@ class Controller extends BaseController
         if($this->authenticatedUser !== null)
             $data['user_id'] = $this->authenticatedUser->id;
 
+       $repos = $this->service->createResource($data);
+
         return $this->response(
             new $this->classes['resource']($repos)
         );
