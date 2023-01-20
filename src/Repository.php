@@ -324,6 +324,8 @@ abstract class Repository
             $data = $this->datamapper->entityToArray($data);    // Then we convert the entity back to array for model.
         }
 
+	// TODO: Improve this code
+	// $this->model::create($data);
         $m = new $this->model();
 
         foreach ($data as $key => $value) {
@@ -354,10 +356,13 @@ abstract class Repository
         if($data instanceof Entity)
             $data = $this->datamapper->entityToArray($data);    // Convert our Entity to array ready for the model
 
+	// TODO: Improve this code
+        // $this->findById($id);
+
         $m = $this->model::find($data['id']);
         if($m === null)
             throw new ResourceNotFoundException();
-        
+
         foreach ($data as $key => $value) {
             // Make sure we're not updating things
             // The user shouldn't be allowed to update.
