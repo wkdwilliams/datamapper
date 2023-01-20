@@ -343,9 +343,8 @@ abstract class Repository
      */
     public function update(array|Entity $data): Entity
     {
-        if ($data instanceof Entity) {
+        if ($data instanceof Entity)
             $data = $this->datamapper->entityToArray($data);    // Convert entity to array to prepare for the model
-        }
 
         $m = $this->model::find($data['id']);
         if($m === null)
