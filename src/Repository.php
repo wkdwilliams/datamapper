@@ -8,6 +8,7 @@ use Lewy\DataMapper\Exceptions\ResourceNotFoundException;
 use Lewy\DataMapper\Model;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Redis;
+use Illuminate\Support\Arr;
 use ReflectionClass;
 
 abstract class Repository
@@ -324,19 +325,8 @@ abstract class Repository
             $data = $this->datamapper->entityToArray($data);    // Then we convert the entity back to array for model.
         }
 
-	// TODO: Improve this code
-	// $this->model::create($data);
         $m = new $this->model();
-
-        foreach ($data as $key => $value) {
-            // Let's ignore these values since our database should handle this
-            if($key === 'id')         continue;
-            if($key === 'created_at') continue;
-            if($key === 'updated_at') continue;
-
-            $m->{$key} = $value;
-        }
-
+        $m->fill($data);
         $m->save();
 
         $this->clearCache(); // Clear the cache so we see our newly created record
@@ -353,28 +343,16 @@ abstract class Repository
      */
     public function update(array|Entity $data): Entity
     {
-        if($data instanceof Entity)
-            $data = $this->datamapper->entityToArray($data);    // Convert our Entity to array ready for the model
-
-	// TODO: Improve this code
-        // $this->findById($id);
+        if ($data instanceof Entity) {
+            $data = $this->datamapper->entityToArray($data);    // Convert entity to array to prepare for the model
+        }
 
         $m = $this->model::find($data['id']);
         if($m === null)
             throw new ResourceNotFoundException();
 
-        foreach ($data as $key => $value) {
-            // Make sure we're not updating things
-            // The user shouldn't be allowed to update.
-            if($key   === 'id')         continue;
-            if($key   === 'created_at') continue;
-            if($key   === 'updated_at') continue;
-
-            $m->{$key} = $value;
-        }
-
+        $m->fill(Arr::except($data, ['id']));
         $m->save();
-        $m->touch();
 
         $this->clearCache(); // Clear the cache so we see our newly updated record
         
