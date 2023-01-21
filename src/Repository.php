@@ -367,18 +367,6 @@ abstract class Repository
      */
     public function delete(int|Entity $id): Entity
     {
-        // If id is null, then delete using eloquent
-        if($id === null)
-        {
-            $entity = $this->findById($id)->entity();
-
-            $this->getQuery()->delete();
-
-            $this->clearCache();
-
-            return $entity;
-        }
-
         if($id instanceof Entity)
             $id = $id->getId();
 
