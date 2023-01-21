@@ -11,7 +11,7 @@ abstract class Service
     /**
      * @var Repository
      */
-    protected Repository $repository;
+    protected Repository|string $repository;
 
     function __construct(?Repository $repository)
     {
