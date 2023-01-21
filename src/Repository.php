@@ -365,8 +365,11 @@ abstract class Repository
      * 
      * @return Entity
      */
-    public function delete(int $id): Entity
+    public function delete(int|Entity $id): Entity
     {
+        if($id instanceof Entity)
+            $id = $id->getId();
+
         $entity = $this->findById($id)->entity();
         
         $this->model->where(['id' => $id])->delete();
