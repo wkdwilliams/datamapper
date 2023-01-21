@@ -365,7 +365,7 @@ abstract class Repository
      * 
      * @return Entity
      */
-    public function delete(int|Entity $id=null): Entity
+    public function delete(int|Entity $id): Entity
     {
         // If id is null, then delete using eloquent
         if($id === null)
