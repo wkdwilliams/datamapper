@@ -11,14 +11,11 @@ abstract class Service
     /**
      * @var Repository
      */
-    protected Repository|string $repository;
+    protected Repository $repository;
 
-    function __construct(?Repository $repository=null)
+    function __construct(Repository $repository)
     {
-        if($repository === null)
-            $this->repository = new $this->repository();
-        else
-            $this->repository = $repository;
+        $this->repository = $repository;
     }
 
     /**
