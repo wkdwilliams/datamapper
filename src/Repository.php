@@ -365,7 +365,7 @@ abstract class Repository
      * 
      * @return Entity
      */
-    public function delete(int|Entity $id): Entity
+    public function delete(int|Entity $id=null): Entity
     {
         if($id instanceof Entity)
             $id = $id->getId();
