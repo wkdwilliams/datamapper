@@ -13,9 +13,12 @@ abstract class Service
      */
     protected Repository $repository;
 
-    function __construct(Repository $repository)
+    function __construct(?Repository $repository)
     {
-        $this->repository = $repository;
+        if($repository === null)
+            $this->repository = new $this->repository();
+        else
+            $this->repository = $repository;
     }
 
     /**
