@@ -63,7 +63,7 @@ abstract class Repository
         $this->paginate     = $paginate;
         $this->page         = $page;
 
-        $this->useCache = config('datamapper.useCache', true);
+        $this->useCache = config('datamapper.useCache', false);
     }
 
     /**
