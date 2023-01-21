@@ -158,6 +158,17 @@ abstract class Repository
     }
 
     /**
+     * Get results using the WHERE IN clause
+     * 
+     * @param array $query
+     * @return Repository
+     */
+    public function whereIn(string $column, array $query): Repository
+    {
+        return $this->setQuery($this->getQuery()->whereIn($column, $query));
+    }
+
+    /**
      * Get results where column is not null
      * 
      * @param $column
@@ -328,12 +339,8 @@ abstract class Repository
      */
     public function create(array|Entity $data): Entity
     {
-        if ($data instanceof Entity) {
+        if ($data instanceof Entity)
             $data = $this->datamapper->entityToArray($data);    // Convert entity to array to prepare for the model
-        } else{
-            $data = $this->datamapper->arrayToEntity($data);    // We must convert array to entity for mapping purposes.
-            $data = $this->datamapper->entityToArray($data);    // Then we convert the entity back to array for model.
-        }
 
         $m = new $this->model();
         $m->fill($data);
@@ -342,6 +349,38 @@ abstract class Repository
         $this->clearCache(); // Clear the cache so we see our newly created record
         
         return $this->datamapper->repoToEntity($m->toArray()); //Return the created entity
+    }
+
+    /**
+     * Create multiple records
+     * 
+     * @param array|EntityCollection $data
+     * 
+     * @return Entity
+     */
+    public function createMultiple(array|EntityCollection $data): EntityCollection
+    {
+        $newEntities = [];
+
+        if ($data instanceof EntityCollection)
+            foreach ($data->getEntities() as $entity)
+                $newEntities[] = $this->datamapper->entityToArray($entity); // Convert entity to array to prepare for the model
+        else
+            $newEntities = $data;
+
+        $models = [];
+
+        foreach ($newEntities as $entity) {
+            $m = new $this->model();
+            $m->fill($entity);
+            $m->save();
+
+            $models[] = $m->toArray();
+        }
+
+        $this->clearCache(); // Clear the cache so we see our newly created record
+        
+        return $this->datamapper->repoToEntityCollection($models); //Return the created entities
     }
 
     /**
@@ -369,6 +408,41 @@ abstract class Repository
     }
 
     /**
+     * Update multiple record
+     * 
+     * @param array|EntityCollection $data
+     * 
+     * @return EntityCollection
+     */
+    public function updateMultiple(array|EntityCollection $data): EntityCollection
+    {
+        $newEntities = [];
+
+        if ($data instanceof EntityCollection)
+            foreach ($data->getEntities() as $entity)
+                $newEntities[] = $this->datamapper->entityToArray($entity); // Convert entity to array to prepare for the model
+        else
+            $newEntities = $data;
+
+        $models = [];
+
+        foreach ($newEntities as $entity) {
+            $m = $this->model::find($entity['id']);
+            if($m === null)
+                throw new ResourceNotFoundException();
+
+            $m->fill(Arr::except($entity, ['id']));
+            $m->save();
+
+            $models[] = $m->toArray();
+        }
+
+        $this->clearCache(); // Clear the cache so we see our newly updated record
+        
+        return $this->datamapper->repoToEntityCollection($models); // Return the updated entities
+    }
+
+    /**
      * Delete a record
      * 
      * @param array $data
@@ -387,6 +461,33 @@ abstract class Repository
         $this->clearCache(); // Clear the cache so we no longer see our deleted record
 
         return $entity; // Return the entity we deleted
+    }
+
+    /**
+     * Delete multiple records
+     * 
+     * @param array $data
+     * 
+     * @return EntityCollection
+     */
+    public function deleteMultiple(array|EntityCollection $id): EntityCollection
+    {
+        $ids = [];
+
+        if($id instanceof EntityCollection)
+            foreach ($id->getEntities() as $i => $value)
+                $ids[] = $value->getId();
+        else
+            foreach ($id as $value)
+                $ids[] = $value['id'];
+
+        $deletedEntities = $this->whereIn('id', $ids)->entityCollection();
+
+        $this->model->whereIn('id', $ids)->delete();
+
+        $this->clearCache(); // Clear the cache so we no longer see our deleted record
+
+        return $deletedEntities; // Return the entity we deleted
     }
 
 }
