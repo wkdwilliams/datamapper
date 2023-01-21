@@ -224,9 +224,19 @@ abstract class Repository
     }
 
     /**
+     * Get the last record
+     * 
+     * @return Repository
+     */
+    public function lastRecord(): Repository
+    {
+        return $this->orderBy('id', 'desc')->limit(1);
+    }
+
+    /**
      * Find all records
      * 
-     * @return EntityCollection
+     * @return Repository
      */
     public function findAll(): Repository
     {
