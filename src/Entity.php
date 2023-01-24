@@ -8,24 +8,24 @@ abstract class Entity
 {
 
     /**
-     * @var string
+     * @var ?int
      */
-    protected $id;
+    protected ?int $id = null;
 
     /**
-     * @var string
+     * @var ?string
      */
-    protected $createdAt;
+    protected ?string $createdAt = null;
 
     /**
-     * @var string
+     * @var ?string
      */
-    protected $updatedAt;
+    protected ?string $updatedAt = null;
 
     /**
-     * @return string
+     * @return ?int
      */
-    public function getId(): ?string
+    public function getId(): ?int
     {
         return $this->id;
     }
@@ -33,13 +33,13 @@ abstract class Entity
     /**
      * @param $id
      */
-    public function setId($id)
+    public function setId($id): void
     {
         $this->id = $id;
     }
 
     /**
-     * @return string
+     * @return ?string
      */
     public function getCreatedAt(): ?string
     {
@@ -55,7 +55,7 @@ abstract class Entity
     }
 
     /**
-     * @return string
+     * @return ?string
      */
     public function getUpdatedAt(): ?string
     {
