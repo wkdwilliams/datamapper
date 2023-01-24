@@ -128,7 +128,9 @@ abstract class Repository
      */
     public function orderBy($column, $direction = 'asc'): Repository
     {
-        return $this->setQuery($this->getQuery()->orderBy($column, $direction));
+        return $this->setQuery(
+            $this->getQuery()->orderBy($column, $direction)
+        );
     }
 
     /**
@@ -154,7 +156,9 @@ abstract class Repository
      */
     public function where(array $query): Repository
     {
-        return $this->setQuery($this->getQuery()->where($query));
+        return $this->setQuery(
+            $this->getQuery()->where($query)
+        );
     }
 
     /**
@@ -165,7 +169,9 @@ abstract class Repository
      */
     public function whereIn(string $column, array $query): Repository
     {
-        return $this->setQuery($this->getQuery()->whereIn($column, $query));
+        return $this->setQuery(
+            $this->getQuery()->whereIn($column, $query)
+        );
     }
 
     /**
@@ -205,20 +211,9 @@ abstract class Repository
      */
     public function findById(string $id): Repository
     {
-        return $this->where(['id' => $id]);
-    }
-
-    /**
-     * Find record by foreign id field
-     * 
-     * @param string $foreignIdField
-     * @param string $id
-     * 
-     * @return Repository
-     */
-    public function findByForeignId(string $foreignIdField, string $id): Repository
-    {
-        return $this->where([$foreignIdField => $id]);
+        return $this->setQuery(
+            $this->getQuery()->where('id', $id)
+        );
     }
 
     /**
@@ -231,7 +226,9 @@ abstract class Repository
      */
     public function findByColumn(string $columnName, string $value): Repository
     {
-        return $this->where([$columnName => $value]);
+        return $this->setQuery(
+            $this->getQuery()->where($columnName, $value)
+        );
     }
 
     /**
@@ -241,7 +238,9 @@ abstract class Repository
      */
     public function lastRecord(): Repository
     {
-        return $this->orderBy('id', 'desc')->limit(1);
+        return $this->setQuery(
+            $this->getQuery()->orderBy('id', 'desc')->limit(1)
+        );
     }
 
     /**
@@ -291,6 +290,10 @@ abstract class Repository
             $data = $data->toArray();
         }
 
+        $this->cacheKey = "";
+        $this->model    = new $this->model;
+        $this->query    = new $this->model;
+
         return $this->datamapper->repoToEntity($data);
     }
 
@@ -326,6 +329,10 @@ abstract class Repository
         else{
             $data = $this->getQuery()->get()->toArray();
         }
+
+        $this->cacheKey = "";
+        $this->model    = new $this->model();
+        $this->query    = new $this->model();
 
         return $this->datamapper->repoToEntityCollection($data);
     }
@@ -456,7 +463,7 @@ abstract class Repository
 
         $entity = $this->findById($id)->entity();
         
-        $this->model->where(['id' => $id])->delete();
+        $this->model->where(['id' => $entity->getId()])->delete();
 
         $this->clearCache(); // Clear the cache so we no longer see our deleted record
 
