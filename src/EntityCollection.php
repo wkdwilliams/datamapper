@@ -58,6 +58,16 @@ class EntityCollection
     }
 
     /**
+     * Get collection to array
+     * 
+     * @return array
+     */
+    public function toArray(): array
+    {
+        return $this->entities;
+    }
+
+    /**
      * Convert entity collection to laravel collection
      * 
      * @return Collection
