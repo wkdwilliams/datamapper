@@ -79,8 +79,7 @@ class Controller extends BaseController
     protected function response(JsonResource $resource, array $paginateData=null, int $status=200): JsonResponse
     {
         return response()->json([
-            'status' => $status,
-            'data'   => $resource,
+            'data' => $resource,
             ...$paginateData ?? []
         ], $status);
     }
