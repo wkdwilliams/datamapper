@@ -276,24 +276,17 @@ abstract class Repository
      */
     public function entity(): Entity
     {
-        if($this->useCache) // Only use the cache in production & if use cache is true
-            $data = Cache::remember($this->cacheKey, Carbon::now()->addHour(), function(){
-                $_data = $this->getQuery()->first();
-                if($_data === null) throw new ResourceNotFoundException();
-
-                return $_data->toArray();
-            });
-        else{
+        $data = $this->getFromCacheOrQuery($this->cacheKey, function () {
             $data = $this->getQuery()->first();
-            if($data === null) throw new ResourceNotFoundException();
-
-            $data = $data->toArray();
-        }
-
-        $this->cacheKey = "";
-        $this->model    = new $this->model;
-        $this->query    = new $this->model;
-
+            if ($data === null) {
+                throw new ResourceNotFoundException();
+            }
+            return $data->toArray();
+        }, Carbon::now()->addHour());
+    
+        $this->model = new $this->model;
+        $this->query = new $this->model;
+    
         return $this->datamapper->repoToEntity($data);
     }
 
@@ -304,14 +297,11 @@ abstract class Repository
      */
     public function entityCollection(): EntityCollection
     {
-        if($this->paginate > 0){
-            if($this->useCache) // Only use the cache if use cache is true
-                $data = Cache::remember($this->cacheKey.":page:".$this->page, Carbon::now()->addHour(), function(){
-                    return $this->getQuery()->paginate($this->paginate, ['*'], 'page', $this->page)->toArray();
-                });
-            else
-                $data = $this->getQuery()->paginate($this->paginate, ['*'], 'page', $this->page)->toArray();
-
+        if ($this->paginate > 0) {
+            $data = $this->getFromCacheOrQuery($this->cacheKey . ":page:" . $this->page, function () {
+                return $this->getQuery()->paginate($this->paginate, ['*'], 'page', $this->page)->toArray();
+            }, Carbon::now()->addHour());
+    
             $collection = $this->datamapper->repoToEntityCollection($data['data']);
             $collection->setPaginatedData([
                 'total'         => $data['total'],
@@ -319,22 +309,31 @@ abstract class Repository
                 'per_page'      => $data['per_page'],
                 'last_page'     => $data['last_page']
             ]);
+    
             return $collection;
         }
-
-        if($this->useCache) // Only use the cache in production & if use cache is true
-            $data = Cache::remember($this->cacheKey.":all", Carbon::now()->addHour(), function(){
-                return $this->getQuery()->get()->toArray();
-            });
-        else{
-            $data = $this->getQuery()->get()->toArray();
-        }
-
-        $this->cacheKey = "";
-        $this->model    = new $this->model();
-        $this->query    = new $this->model();
-
+    
+        $data = $this->getFromCacheOrQuery($this->cacheKey . ":all", function () {
+            return $this->getQuery()->get()->toArray();
+        }, Carbon::now()->addHour());
+    
+        $this->model = new $this->model();
+        $this->query = new $this->model();
+    
         return $this->datamapper->repoToEntityCollection($data);
+    }
+
+    /**
+     * @param mixed $cacheKey
+     * @param mixed $queryFn
+     * @param mixed $cacheExpiration
+     */
+    private function getFromCacheOrQuery($cacheKey, $queryFn, $cacheExpiration)
+    {
+        if ($this->useCache)
+            return Cache::remember($cacheKey, $cacheExpiration, $queryFn);
+
+        return $queryFn();
     }
 
     /**
